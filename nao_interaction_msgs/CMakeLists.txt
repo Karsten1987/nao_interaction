@@ -25,6 +25,10 @@ add_message_files(DIRECTORY msg
     LandmarkDetected.msg 
     #~ nao_audio
     AudioSourceLocalization.msg
+    #~ nao people
+    Face.msg
+    Person.msg
+    Persons.msg
 )
 
 #Add service files
