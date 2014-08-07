@@ -1,0 +1,26 @@
+<package>
+  <name>nao_interaction_viz</name>
+  <version>0.1.0</version>
+  <description>
+    Visualization of some of the interaction msgs
+  </description>
+  <maintainer email="vincent.rabaud@gmail.com">Vincent Rabaud</maintainer>
+  <license>Apache 2.0</license>
+
+  <url>http://ros.org/wiki/nao_interaction_msgs</url>
+  <url type="bugtracker">https://github.com/ros-nao/nao_interaction/issues</url>
+  <url type="repository">https://github.com/ros-nao/nao_interaction</url>
+
+  <author>Vincent Rabaud</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>nao_interaction_msgs</build_depend>
+  <build_depend>rviz</build_depend>
+
+  <run_depend>rviz</run_depend>
+
+  <export>
+    <rviz plugin="${prefix}/person_rviz_plugin.xml"/>
+  </export>
+</package>
