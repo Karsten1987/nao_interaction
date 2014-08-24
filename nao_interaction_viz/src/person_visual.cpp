@@ -33,6 +33,7 @@
 #include <rviz/ogre_helpers/movable_text.h>
 
 #include "person_visual.h"
+#include "person_shape.h"
 
 namespace nao_interaction_viz {
 
@@ -65,7 +66,8 @@ PersonVisual::PersonVisual(Ogre::SceneManager* scene_manager, Ogre::SceneNode* p
   name_->setVisible(false);
 
   // Initialize the cylinder
-  cylinder_.reset(new rviz::Shape(rviz::Shape::Cylinder, scene_manager, object_node_));
+//  cylinder_.reset(new rviz::Shape(rviz::Shape::Cylinder, scene_manager, object_node_));
+  cylinder_.reset(new rviz::PersonShape(rviz::Shape::Cylinder, scene_manager, object_node_));
 
   object_node_->attachObject(name_.get());
 }
@@ -100,9 +102,9 @@ void PersonVisual::setMessage(const nao_interaction_msgs::Person& person, bool d
   const nao_interaction_msgs::Face &face = person.face;
 
   // Deal with the cylinder display
-  cylinder_->setColor(1.0, 0.0, 0.0, 0.8);
+//  cylinder_->setColor(1.0, 0.0, 0.0, 0.8);
   // Deal with the height of the cylinder
-  float height = person.height;
+  float height = person.height/10;
   if (face.height != 0.0)
     // Make sure the cylinder is a bit shorter to display the head
     height = face.height;

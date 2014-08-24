@@ -9,6 +9,7 @@ qt4_wrap_cpp(MOC_FILES
 )
 
 set(SOURCE_FILES
+  person_shape.cpp
   person_display.cpp
   person_visual.cpp
   ${MOC_FILES}
