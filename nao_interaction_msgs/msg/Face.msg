@@ -15,5 +15,11 @@ float32 height
 # The image of the face
 sensor_msgs/Image image
 
+# The direction of the head
+geometry_msgs/Vector3 head
+
 # The direction of the gaze
 geometry_msgs/Vector3 gaze
+
+# 12 characteristic points of the face
+geometry_msgs/Point[] face_points

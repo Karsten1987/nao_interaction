@@ -79,6 +79,54 @@ void PersonShape::createEntity(const std::string &name,
     createMaterial("textures/person_gender_male.png");
     entity_ = scene_manager->createEntity(name,  Ogre::SceneManager::PT_PLANE);
     break;
+
+  case GENDER_FEMALE:
+    mesh_name = "rviz_person_gender_female";
+    createMaterial("textures/person_gender_female.png");
+    entity_ = scene_manager->createEntity(name,  Ogre::SceneManager::PT_PLANE);
+    break;
+
+  case VALENCE_NEUTRAL:
+    mesh_name = "rviz_valence_neutral";
+    createMaterial("textures/valence_neutral.png");
+    entity_ = scene_manager->createEntity(name,  Ogre::SceneManager::PT_PLANE);
+    break;
+  }
+  entity_->setMaterial(material_);
+
+  type_ = type;
+}
+
+bool PersonShape::changeMaterial(const PersonShape::Type type)
+{
+  if (!entity_ )
+  {
+    std::cerr << "entity is null in changeMaterial" << std::endl;
+    return false;
+  }
+
+  std::cerr << "Changing material " << std::endl;
+  switch (type)
+  {
+  case FACE:
+    createMaterial("textures/face_neutral.png");
+    break;
+
+  case BODY:
+    createMaterial();
+    break;
+
+  case GENDER_MALE:
+    createMaterial("textures/person_gender_male.png");
+    break;
+
+  case GENDER_FEMALE:
+    createMaterial("textures/person_gender_female.png");
+    break;
+
+  case VALENCE_NEUTRAL:
+    createMaterial("textures/valence_neutral.png");
+    break;
   }
   entity_->setMaterial(material_);
 }

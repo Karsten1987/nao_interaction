@@ -27,15 +27,15 @@ public:
 
   enum Type
   {
-    BODY,
-    FACE,
-    GENDER_MALE,
-    GENDER_FEMALE,
-    VALENCE_HIGHEST,
-    VALENCE_HIGH,
-    VALENCE_NEUTRAL,
-    VALENCE_LOW,
-    VALENCE_LOWEST,
+    BODY = 10,
+    FACE = 11,
+    GENDER_MALE = 0,
+    GENDER_FEMALE = 1,
+    VALENCE_HIGHEST = 4,
+    VALENCE_HIGH = 5,
+    VALENCE_NEUTRAL = 6,
+    VALENCE_LOW = 7,
+    VALENCE_LOWEST = 8,
   };
 
   PersonShape(Type type, Ogre::SceneManager* scene_manager, Ogre::SceneNode* parent_node = NULL);
@@ -60,6 +60,8 @@ public:
 
   bool createMaterial(const std::string& image_name = "default",
                       const std::string& resource_group = "Autodetect" );
+
+  bool changeMaterial(const PersonShape::Type type);
 
   // overwrite createEntity process and fill in a mesh
   void createEntity(const std::string& name,
