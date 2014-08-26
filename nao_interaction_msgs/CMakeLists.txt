@@ -27,6 +27,7 @@ add_message_files(DIRECTORY msg
     AudioSourceLocalization.msg
     #~ nao people
     Face.msg
+    Emotion.msg
     Person.msg
     Persons.msg
 )

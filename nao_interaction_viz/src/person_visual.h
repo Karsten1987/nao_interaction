@@ -34,6 +34,7 @@ class Axes;
 class DisplayContext;
 class MovableText;
 class Shape;
+class PersonShape;
 }
 
 namespace nao_interaction_viz {
@@ -90,7 +91,7 @@ private:
   boost::shared_ptr<rviz::Axes> axes_head_;
 
   /** The cylinder representing the person */
-  boost::shared_ptr<rviz::Shape> cylinder_;
+  boost::shared_ptr<rviz::PersonShape> cylinder_;
 
   // A SceneNode whose pose is set to match the coordinate frame of
   // the Object message header.

@@ -31,6 +31,7 @@
 #include <rviz/ogre_helpers/arrow.h>
 #include <rviz/ogre_helpers/shape.h>
 #include <rviz/ogre_helpers/movable_text.h>
+#include <rviz/ogre_helpers/mesh_shape.h>
 
 #include "person_visual.h"
 #include "person_shape.h"
@@ -65,10 +66,11 @@ PersonVisual::PersonVisual(Ogre::SceneManager* scene_manager, Ogre::SceneNode* p
   name_->setColor(Ogre::ColourValue::White);
   name_->setVisible(false);
 
-  // Initialize the cylinder
+  // Initialize the cylinder for a basic person
 //  cylinder_.reset(new rviz::Shape(rviz::Shape::Cylinder, scene_manager, object_node_));
-  cylinder_.reset(new rviz::PersonShape(rviz::Shape::Cylinder, scene_manager, object_node_));
+  cylinder_.reset(new rviz::PersonShape(rviz::PersonShape::FACE, scene_manager, object_node_));
 
+//  new rviz::PersonShape(rviz::Shape::Cone, scene_manager, object_node_);
   object_node_->attachObject(name_.get());
 }
 
@@ -102,7 +104,7 @@ void PersonVisual::setMessage(const nao_interaction_msgs::Person& person, bool d
   const nao_interaction_msgs::Face &face = person.face;
 
   // Deal with the cylinder display
-//  cylinder_->setColor(1.0, 0.0, 0.0, 0.8);
+  cylinder_->setColor(1.0, 1.0, 1.0, 0.8);
   // Deal with the height of the cylinder
   float height = person.height/10;
   if (face.height != 0.0)
@@ -112,7 +114,8 @@ void PersonVisual::setMessage(const nao_interaction_msgs::Person& person, bool d
   object_node_->setPosition(position);
   Ogre::Quaternion quat(std::sqrt(2) / 2, std::sqrt(2) / 2, 0, 0);
   cylinder_->setOrientation(quat);
-  Ogre::Vector3 scale(person.width, height, person.width);
+  Ogre::Vector3 scale(0.01, 0.01, 1);
+//  Ogre::Vector3 scale(person.width, height, person.width);
   cylinder_->setScale(scale);
 
   // Deal with the face
