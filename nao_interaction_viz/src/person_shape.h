@@ -29,7 +29,13 @@ public:
   {
     BODY,
     FACE,
-    GENDER,
+    GENDER_MALE,
+    GENDER_FEMALE,
+    VALENCE_HIGHEST,
+    VALENCE_HIGH,
+    VALENCE_NEUTRAL,
+    VALENCE_LOW,
+    VALENCE_LOWEST,
   };
 
   PersonShape(Type type, Ogre::SceneManager* scene_manager, Ogre::SceneNode* parent_node = NULL);
@@ -52,7 +58,7 @@ public:
   Ogre::Entity* getEntity() { return entity_; }
   Ogre::MaterialPtr getMaterial() { return material_; }
 
-  bool createMaterial(const std::string& image_name,
+  bool createMaterial(const std::string& image_name = "default",
                       const std::string& resource_group = "Autodetect" );
 
   // overwrite createEntity process and fill in a mesh
@@ -64,6 +70,8 @@ public:
   //  static bool loadImage(const Ogre::String& texture_name, const Ogre::String& texture_path);
 
 protected:
+  void setMaterial();
+
   Ogre::SceneNode* scene_node_;
   Ogre::SceneNode* offset_node_;
   Ogre::Entity* entity_;

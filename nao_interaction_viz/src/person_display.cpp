@@ -65,13 +65,15 @@ void PersonDisplay::reset() {
 }
 
 // This is our callback to handle an incoming message.
-void PersonDisplay::processMessage(const nao_interaction_msgs::PersonsConstPtr& msg) {
+void PersonDisplay::processMessage(const nao_interaction_msgs::PersonsConstPtr& msg)
+{
   // Here we call the rviz::FrameManager to get the transform from the
   // fixed frame to the frame in the header of this message. If
   // it fails, we can't do anything else so we return.
 
   visuals_.clear();
-  for (size_t i_msg = 0; i_msg < msg->persons.size(); ++i_msg) {
+  for (size_t i_msg = 0; i_msg < msg->persons.size(); ++i_msg)
+  {
     const nao_interaction_msgs::Person& object = msg->persons[i_msg];
     // Create a new visual for that message
     boost::shared_ptr<PersonVisual> visual = boost::shared_ptr<PersonVisual>(
@@ -84,12 +86,15 @@ void PersonDisplay::processMessage(const nao_interaction_msgs::PersonsConstPtr& 
 
     Ogre::Quaternion orientation;
     Ogre::Vector3 position;
-    if (!context_->getFrameManager()->getTransform(object.header.frame_id, object.header.stamp, position,
-        orientation)) {
+    if (!context_->getFrameManager()->getTransform(object.header.frame_id,
+                                                   object.header.stamp,
+                                                   position,
+                                                   orientation)) {
       ROS_DEBUG("Error transforming from frame '%s' to frame '%s'", object.header.frame_id.c_str(),
           qPrintable(fixed_frame_));
       return;
     }
+    ROS_INFO_STREAM("base translation: " << position);
 
     visual->setFramePosition(position);
     visual->setFrameOrientation(orientation);

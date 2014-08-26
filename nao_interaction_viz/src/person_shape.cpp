@@ -10,6 +10,7 @@
 #include <OgreTextureManager.h>
 #include <OgreTechnique.h>
 #include <rviz/ogre_helpers/stl_loader.h>
+#include <OgreResourceGroupManager.h>
 namespace rviz
 {
 PersonShape::PersonShape(PersonShape::Type type, Ogre::SceneManager *scene_manager, Ogre::SceneNode *parent_node):
@@ -18,6 +19,7 @@ PersonShape::PersonShape(PersonShape::Type type, Ogre::SceneManager *scene_manag
 {
   ROS_INFO_STREAM("PersonShape called");
 
+  // TAKE THE NAME INTO ACCOUNT !!!
   static uint32_t count = 0;
   std::stringstream ss;
   ss << "Shape" << count++;
@@ -47,8 +49,8 @@ PersonShape::~PersonShape()
 
 
 void PersonShape::createEntity(const std::string &name,
-                                        PersonShape::Type type,
-                                        Ogre::SceneManager *scene_manager)
+                               PersonShape::Type type,
+                               Ogre::SceneManager *scene_manager)
 {
   ROS_INFO_STREAM("my entity is called");
 
@@ -56,22 +58,41 @@ void PersonShape::createEntity(const std::string &name,
   Ogre::MeshPtr mesh_ptr;
   std::string mesh_name;
 
-  if (type == PersonShape::FACE)
+  switch (type)
   {
-    // ignore shape_type since this has to be a person
-    mesh_name = "rviz_face";
-    stl_loader.load("/home/kknese/rviz_face.stl");
+  case FACE:
+    mesh_name = "rviz_person_face";
     createMaterial("textures/face_neutral.png");
+    entity_ = scene_manager->createEntity(name,  Ogre::SceneManager::PT_PLANE);
+    break;
+
+  case BODY:
+    createMaterial();
+    mesh_name = "rviz_person_body";
+    stl_loader.load("/home/kknese/rviz_body.stl");
+    mesh_ptr = stl_loader.toMesh(name);
+    entity_ = scene_manager->createEntity(name, mesh_ptr->getName() );
+    break;
+
+  case GENDER_MALE:
+    mesh_name = "rviz_person_gender_male";
+    createMaterial("textures/person_gender_male.png");
+    entity_ = scene_manager->createEntity(name,  Ogre::SceneManager::PT_PLANE);
+    break;
   }
-  mesh_ptr = stl_loader.toMesh(name);
-//  entity_ = scene_manager->createEntity(name, mesh_ptr->getName() );
-  entity_ = scene_manager->createEntity( Ogre::SceneManager::PT_PLANE);
   entity_->setMaterial(material_);
 }
 
 bool PersonShape::createMaterial( const std::string& image_name,
                                   const std::string& resource_group)
 {
+  if (image_name == "default")
+  {
+    material_ = Ogre::MaterialManager::getSingleton().create( "default",
+                                                              Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME );
+    material_->setCullingMode(Ogre::CULL_NONE);
+    return true;
+  }
   material_ = Ogre::MaterialManager::getSingleton().load( image_name, resource_group );
   material_->setCullingMode(Ogre::CULL_NONE);
   if( material_.isNull() )
@@ -91,6 +112,7 @@ bool PersonShape::createMaterial( const std::string& image_name,
   }
   return true;
 }
+
 
 void PersonShape::setColor(const Ogre::ColourValue& c)
 {
