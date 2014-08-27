@@ -84,8 +84,6 @@ public:
 private:
   rviz::DisplayContext* display_context_;
 
-  /** The name of the person */
-  boost::shared_ptr<rviz::MovableText> person_name_;
 
   /** The pose of the object */
   boost::shared_ptr<rviz::Axes> axes_head_;
@@ -94,6 +92,7 @@ private:
   boost::shared_ptr<rviz::PersonShape> person_body_;
   boost::shared_ptr<rviz::PersonShape> person_valence_;
   boost::shared_ptr<rviz::PersonShape> person_gender_;
+  boost::shared_ptr<rviz::MovableText> person_name_;
   boost::shared_ptr<rviz::MovableText> person_age_;
 
   // A SceneNode whose pose is set to match the coordinate frame of
@@ -101,6 +100,7 @@ private:
   Ogre::SceneNode* frame_node_;
   Ogre::SceneNode* object_node_;
   Ogre::SceneNode* person_name_node_;
+  Ogre::SceneNode* person_age_node_;
 
   // The SceneManager, kept here only so the destructor can ask it to
   // destroy the ``frame_node_``.

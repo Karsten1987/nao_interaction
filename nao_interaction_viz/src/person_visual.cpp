@@ -54,15 +54,26 @@ PersonVisual::PersonVisual(Ogre::SceneManager* scene_manager, Ogre::SceneNode* p
   frame_node_ = parent_node->createChildSceneNode();
   object_node_ = frame_node_->createChildSceneNode();
   person_name_node_ = object_node_->createChildSceneNode();
+  person_age_node_ = object_node_->createChildSceneNode();
 
   // Initialize the axes
   axes_head_.reset(new rviz::Axes(scene_manager_, object_node_));
   axes_head_->setScale(Ogre::Vector3(0.1, 0.1, 0.1));
 
   // Initialize the name
+  person_age_.reset(new rviz::MovableText("EMPTY"));
+  person_age_->setTextAlignment(rviz::MovableText::H_CENTER, rviz::MovableText::V_CENTER);
+  person_age_->setCharacterHeight(0.1);
+  person_age_->showOnTop();
+  person_age_->setColor(Ogre::ColourValue::White);
+  person_age_->setVisible(true);
+  person_age_node_->attachObject(person_age_.get());
+
+
+  // Initialize the age
   person_name_.reset(new rviz::MovableText("EMPTY"));
   person_name_->setTextAlignment(rviz::MovableText::H_CENTER, rviz::MovableText::V_CENTER);
-  person_name_->setCharacterHeight(0.08);
+  person_name_->setCharacterHeight(0.1);
   person_name_->showOnTop();
   person_name_->setColor(Ogre::ColourValue::White);
   person_name_->setVisible(true);
@@ -73,16 +84,13 @@ PersonVisual::PersonVisual(Ogre::SceneManager* scene_manager, Ogre::SceneNode* p
                                            scene_manager,
                                            object_node_));
 
-  // Initialize the valence face pictogram
-  person_gender_.reset(new rviz::PersonShape(rviz::PersonShape::GENDER_FEMALE,
-                                             scene_manager,
+  person_gender_.reset(new rviz::PersonShape(rviz::PersonShape::GENDER_MALE,
+                                             scene_manager_,
                                              object_node_));
 
-  // Initialize the valence gender pictogram
   person_valence_.reset(new rviz::PersonShape(rviz::PersonShape::VALENCE_NEUTRAL,
-                                              scene_manager,
+                                              scene_manager_,
                                               object_node_));
-  //  new rviz::PersonShape(rviz::Shape::Cone, scene_manager, object_node_);
 }
 
 PersonVisual::~PersonVisual() {
@@ -106,19 +114,18 @@ void PersonVisual::setMessage(const nao_interaction_msgs::Person& person, bool d
                          0);
   person_body_->setPosition(position);
 
+  // Initialize the valence face pictogram
+
+
+
 
   // GENDER
-  if (person_gender_->getType() != person.gender)
+  rviz::PersonShape::Type gender = rviz::PersonShape::GENDER_FEMALE;
+  if (person.gender[0] == person.GENDER_MALE)
   {
-    if (person_gender_->getType() == rviz::PersonShape::GENDER_MALE)
-    {
-      person_gender_->changeMaterial(rviz::PersonShape::GENDER_FEMALE);
-    }
-    else
-    {
-      person_gender_->changeMaterial(rviz::PersonShape::GENDER_MALE);
-    }
+    gender = rviz::PersonShape::GENDER_MALE;
   }
+  person_gender_->changeMaterial(gender);
   Ogre::Quaternion quat(std::sqrt(2) / 2, std::sqrt(2) / 2, 0, 0);
   person_gender_->setOrientation(quat);
   Ogre::Vector3 scale_gender(0.001, 0.001, 1);
@@ -131,6 +138,25 @@ void PersonVisual::setMessage(const nao_interaction_msgs::Person& person, bool d
 
 
   // VALENCE
+  rviz::PersonShape::Type valence = rviz::PersonShape::VALENCE_LOWEST;
+  if (person.emotion.valence[0] > -60)
+  {
+    valence = rviz::PersonShape::VALENCE_LOW;
+  }
+  if (person.emotion.valence[0] > -20)
+  {
+    valence = rviz::PersonShape::VALENCE_NEUTRAL;
+  }
+  if (person.emotion.valence[0] > 20)
+  {
+    valence = rviz::PersonShape::VALENCE_HIGH;
+  }
+  if (person.emotion.valence[0] > 60)
+  {
+    valence = rviz::PersonShape::VALENCE_HIGHEST;
+  }
+  // Initialize the valence gender pictogram
+  person_valence_->changeMaterial(valence);
   //  Ogre::Quaternion quat(std::sqrt(2) / 2, std::sqrt(2) / 2, 0, 0);
   person_valence_->setOrientation(quat);
   //  Ogre::Vector3 scale_gender(0.002, 0.002, 1);
@@ -151,6 +177,16 @@ void PersonVisual::setMessage(const nao_interaction_msgs::Person& person, bool d
                               position.y,
                               person.height-0.2);
   person_name_node_->setPosition(name_position);
+
+  // AGE
+  std::stringstream age_caption;
+  age_caption << "Person Age:" << person.age[0];
+  person_age_->setCaption(age_caption.str());
+  person_age_->setVisible(true);
+  Ogre::Vector3 age_position(position.x+1.7*person.width,
+                              position.y,
+                              person.height-0.3);
+  person_age_node_->setPosition(age_position);
 
   // Deal with the face
   //  if ((!do_display_face) || (face.height == 0.0))

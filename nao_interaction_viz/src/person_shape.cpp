@@ -17,12 +17,13 @@ PersonShape::PersonShape(PersonShape::Type type, Ogre::SceneManager *scene_manag
   Object(scene_manager),
   type_(type)
 {
-  ROS_INFO_STREAM("PersonShape called");
 
   // TAKE THE NAME INTO ACCOUNT !!!
   static uint32_t count = 0;
   std::stringstream ss;
-  ss << "Shape" << count++;
+  ss << "PersonShape" << count++;
+  ROS_INFO_STREAM("PersonShape Constructor called "<< ss.str());
+
   this->createEntity(ss.str(), type, scene_manager);
 
   scene_node_ = parent_node->createChildSceneNode();
@@ -37,12 +38,15 @@ PersonShape::PersonShape(PersonShape::Type type, Ogre::SceneManager *scene_manag
 
 PersonShape::~PersonShape()
 {
+  ROS_INFO_STREAM("PersonShape DEnstructor called");
   scene_manager_->destroySceneNode(scene_node_->getName() );
   scene_manager_->destroySceneNode(offset_node_->getName() );
 
   if (entity_)
+  {
+    std::cerr << "destroy entity :" << entity_->getName() << std::endl;
     scene_manager_->destroyEntity( entity_ );
-
+  }
   material_->unload();
   Ogre::MaterialManager::getSingleton().remove(material_->getName());
 }
@@ -52,46 +56,23 @@ void PersonShape::createEntity(const std::string &name,
                                PersonShape::Type type,
                                Ogre::SceneManager *scene_manager)
 {
-  ROS_INFO_STREAM("my entity is called");
+  ROS_INFO_STREAM("create new entity");
 
-  ogre_tools::STLLoader stl_loader;
-  Ogre::MeshPtr mesh_ptr;
-  std::string mesh_name;
-
-  switch (type)
+  if (type == PersonShape::BODY)
   {
-  case FACE:
-    mesh_name = "rviz_person_face";
-    createMaterial("textures/face_neutral.png");
-    entity_ = scene_manager->createEntity(name,  Ogre::SceneManager::PT_PLANE);
-    break;
-
-  case BODY:
-    createMaterial();
-    mesh_name = "rviz_person_body";
+    ogre_tools::STLLoader stl_loader;
+    Ogre::MeshPtr mesh_ptr;
+    std::string mesh_name = "rviz_person_body";
     stl_loader.load("/home/kknese/rviz_body.stl");
-    mesh_ptr = stl_loader.toMesh(name);
+    mesh_ptr = stl_loader.toMesh(mesh_name);
     entity_ = scene_manager->createEntity(name, mesh_ptr->getName() );
-    break;
-
-  case GENDER_MALE:
-    mesh_name = "rviz_person_gender_male";
-    createMaterial("textures/person_gender_male.png");
-    entity_ = scene_manager->createEntity(name,  Ogre::SceneManager::PT_PLANE);
-    break;
-
-  case GENDER_FEMALE:
-    mesh_name = "rviz_person_gender_female";
-    createMaterial("textures/person_gender_female.png");
-    entity_ = scene_manager->createEntity(name,  Ogre::SceneManager::PT_PLANE);
-    break;
-
-  case VALENCE_NEUTRAL:
-    mesh_name = "rviz_valence_neutral";
-    createMaterial("textures/valence_neutral.png");
-    entity_ = scene_manager->createEntity(name,  Ogre::SceneManager::PT_PLANE);
-    break;
   }
+  else{
+    entity_ = scene_manager->createEntity(name,  Ogre::SceneManager::PT_PLANE);
+  }
+
+  // set _material
+  changeMaterial(type);
   entity_->setMaterial(material_);
 
   type_ = type;
@@ -111,21 +92,29 @@ bool PersonShape::changeMaterial(const PersonShape::Type type)
   case FACE:
     createMaterial("textures/face_neutral.png");
     break;
-
   case BODY:
-    createMaterial();
+    createMaterial("default");
     break;
-
   case GENDER_MALE:
     createMaterial("textures/person_gender_male.png");
     break;
-
   case GENDER_FEMALE:
     createMaterial("textures/person_gender_female.png");
     break;
-
+  case VALENCE_LOWEST:
+    createMaterial("textures/valence_lowest.png");
+    break;
+  case VALENCE_LOW:
+    createMaterial("textures/valence_low.png");
+    break;
   case VALENCE_NEUTRAL:
     createMaterial("textures/valence_neutral.png");
+    break;
+  case VALENCE_HIGH:
+    createMaterial("textures/valence_high.png");
+    break;
+  case VALENCE_HIGHEST:
+    createMaterial("textures/valence_highest.png");
     break;
   }
   entity_->setMaterial(material_);
