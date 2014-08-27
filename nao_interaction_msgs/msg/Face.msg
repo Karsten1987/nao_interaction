@@ -1,4 +1,6 @@
 # Message describing the face of a person.
+float32 NO_HEAD = 0.0
+float32 NO_GAZE = 0.0
 
 # Header
 Header header

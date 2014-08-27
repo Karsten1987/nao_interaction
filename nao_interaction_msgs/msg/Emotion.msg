@@ -3,7 +3,7 @@
 # Header
 Header header
 
-# Valence emotion of the person [-100;100]; Format : [value; confidence] 
+# Valence emotion of the person [-100;100]; Format : [value; confidence]
 float32[] valence
 
 # Attention of the person toward the robot [0;100]; Format : [value; confidence]

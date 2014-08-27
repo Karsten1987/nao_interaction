@@ -3,7 +3,7 @@ uint32 GENDER_MALE = 1
 uint32 GENDER_FEMALE = 0
 uint32 NO_GENDER = 2
 
-uint32 NO_AGE = 100
+uint32 NO_AGE = 0
 
 # Header
 Header header
