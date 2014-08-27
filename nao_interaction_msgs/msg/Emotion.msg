@@ -1,10 +1,7 @@
-# Message describing the face of a person.
+# Message describing the emotion of a person.
 
 # Header
 Header header
-
-# Person ID
-uint32 id
 
 # Valence emotion of the person [-100;100]; Format : [value; confidence] 
 float32[] valence
