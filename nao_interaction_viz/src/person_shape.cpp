@@ -11,12 +11,21 @@
 #include <OgreTechnique.h>
 #include <rviz/ogre_helpers/stl_loader.h>
 #include <OgreResourceGroupManager.h>
+
+#include <ros/package.h>
+
 namespace rviz
 {
 PersonShape::PersonShape(PersonShape::Type type, Ogre::SceneManager *scene_manager, Ogre::SceneNode *parent_node):
   Object(scene_manager),
   type_(type)
 {
+
+  if (package_root == "")
+  {
+    package_root = ros::package::getPath(ROS_PACKAGE_NAME);
+    ROS_INFO_STREAM("package root:" << package_root);
+  }
 
   // TAKE THE NAME INTO ACCOUNT !!!
   static uint32_t count = 0;

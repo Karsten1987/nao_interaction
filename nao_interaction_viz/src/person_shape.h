@@ -53,8 +53,7 @@ public:
   virtual const Ogre::Vector3& getPosition();
   virtual const Ogre::Quaternion& getOrientation();
 
-  Ogre::SceneNode* getRootNode() { return scene_node_; }
-  void setUserData( const Ogre::Any& data );
+  Ogre::SceneNode* getRootNode() { return scene_node_; }  void setUserData( const Ogre::Any& data );
   Ogre::Entity* getEntity() { return entity_; }
   Ogre::MaterialPtr getMaterial() { return material_; }
 
@@ -80,6 +79,9 @@ protected:
   Ogre::MaterialPtr material_;
   Type type_;
   const std::string mesh_file_;
+
+private:
+  std::string package_root;
 };
 
 } // namespace rviz

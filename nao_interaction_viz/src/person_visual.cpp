@@ -52,6 +52,10 @@ PersonVisual::PersonVisual(Ogre::SceneManager* scene_manager, Ogre::SceneNode* p
   // Here we create a node to store the pose of the Imu's header frame
   // relative to the RViz fixed frame.
   frame_node_ = parent_node->createChildSceneNode();
+//  Ogre::Quaternion quat(std::sqrt(2) / 2,  0, std::sqrt(2) / 2, 0);
+//  setFrameOrientation(quat);
+//  static const Ogre::Quaternion test_orientation = Ogre::Vector3::UNIT_Z.getRotationTo( Ogre::Vector3::UNIT_X );
+//  setFrameOrientation(test_orientation);
   object_node_ = frame_node_->createChildSceneNode();
   person_name_node_ = object_node_->createChildSceneNode();
   person_age_node_ = object_node_->createChildSceneNode();
@@ -65,7 +69,7 @@ PersonVisual::PersonVisual(Ogre::SceneManager* scene_manager, Ogre::SceneNode* p
   person_age_->setTextAlignment(rviz::MovableText::H_CENTER, rviz::MovableText::V_CENTER);
   person_age_->setCharacterHeight(0.1);
   person_age_->showOnTop();
-  person_age_->setColor(Ogre::ColourValue::White);
+  person_age_->setColor(Ogre::ColourValue::Black);
   person_age_->setVisible(true);
   person_age_node_->attachObject(person_age_.get());
 
@@ -75,7 +79,7 @@ PersonVisual::PersonVisual(Ogre::SceneManager* scene_manager, Ogre::SceneNode* p
   person_name_->setTextAlignment(rviz::MovableText::H_CENTER, rviz::MovableText::V_CENTER);
   person_name_->setCharacterHeight(0.1);
   person_name_->showOnTop();
-  person_name_->setColor(Ogre::ColourValue::White);
+  person_name_->setColor(Ogre::ColourValue::Black);
   person_name_->setVisible(true);
   person_name_node_->attachObject(person_name_.get());
 
@@ -103,10 +107,16 @@ PersonVisual::~PersonVisual() {
 void PersonVisual::setMessage(const nao_interaction_msgs::Person& person, bool do_display_id,
                               bool do_display_confidence, bool do_display_face) {
 
-  //  const nao_interaction_msgs::Face &face = person.face;
+  Ogre::Quaternion quat(std::sqrt(2) / 2,  0, 0, std::sqrt(2) / 2);
 
-  // PERSON
-  person_body_->setColor(1.0, 1.0, 1.0, 0.8);
+  // BODY
+  float body_alpha = 0.8;
+  if (person.person_confidence > 0.1)
+  {
+    body_alpha = person.person_confidence;
+  }
+  person_body_->setOrientation(quat);
+  person_body_->setColor(0.2, 0.2, 0.2, body_alpha);
   Ogre::Vector3 scale(person.width, person.width/2, person.height);
   person_body_->setScale(scale);
   Ogre::Vector3 position(person.pose.x,
@@ -114,25 +124,21 @@ void PersonVisual::setMessage(const nao_interaction_msgs::Person& person, bool d
                          0);
   person_body_->setPosition(position);
 
-  // Initialize the valence face pictogram
-
-
-
-
   // GENDER
+//  Ogre::Quaternion image_quat(std::sqrt(2) / 2,  0, std::sqrt(2) / 2, 0);
+  Ogre::Quaternion image_quat(0.5,  0.5, 0.5, 0.5);
   rviz::PersonShape::Type gender = rviz::PersonShape::GENDER_FEMALE;
   if (person.gender[0] == person.GENDER_MALE)
   {
     gender = rviz::PersonShape::GENDER_MALE;
   }
   person_gender_->changeMaterial(gender);
-  Ogre::Quaternion quat(std::sqrt(2) / 2, std::sqrt(2) / 2, 0, 0);
-  person_gender_->setOrientation(quat);
-  Ogre::Vector3 scale_gender(0.001, 0.001, 1);
+  person_gender_->setOrientation(image_quat);
+  Ogre::Vector3 scale_gender(0.0007, 0.0007, 1);
   person_gender_->setScale(scale_gender);
   person_gender_->setColor(1.0, 1.0, 1.0, 0.9);
-  Ogre::Vector3 gender_position(position.x+person.width,
-                                position.y,
+  Ogre::Vector3 gender_position(position.x,
+                                position.y-1.5*person.width,
                                 person.height);
   person_gender_->setPosition(gender_position);
 
@@ -157,35 +163,34 @@ void PersonVisual::setMessage(const nao_interaction_msgs::Person& person, bool d
   }
   // Initialize the valence gender pictogram
   person_valence_->changeMaterial(valence);
-  //  Ogre::Quaternion quat(std::sqrt(2) / 2, std::sqrt(2) / 2, 0, 0);
-  person_valence_->setOrientation(quat);
+  person_valence_->setOrientation(image_quat);
   //  Ogre::Vector3 scale_gender(0.002, 0.002, 1);
   person_valence_->setScale(scale_gender);
   person_valence_->setColor(1.0, 1.0, 1.0, 0.9);
-  Ogre::Vector3 valence_position(position.x+2.0*person.width,
-                                 position.y,
+  Ogre::Vector3 valence_position(position.x,
+                                 position.y-1.0*person.width,
                                  person.height);
   person_valence_->setPosition(valence_position);
 
 
-  // NAME
+  // NAME/ID
   std::stringstream caption;
-  caption << "Person ID:" << person.id;
+  caption << "ID:" << person.id;
   person_name_->setCaption(caption.str());
   person_name_->setVisible(true);
-  Ogre::Vector3 name_position(position.x+1.5*person.width,
-                              position.y,
-                              person.height-0.2);
+  Ogre::Vector3 name_position(position.x,
+                              position.y-1.0*person.width,
+                              person.height-0.15);
   person_name_node_->setPosition(name_position);
 
   // AGE
   std::stringstream age_caption;
-  age_caption << "Person Age:" << person.age[0];
+  age_caption << person.age[0] << " years";
   person_age_->setCaption(age_caption.str());
   person_age_->setVisible(true);
-  Ogre::Vector3 age_position(position.x+1.7*person.width,
-                              position.y,
-                              person.height-0.3);
+  Ogre::Vector3 age_position(position.x,
+                              position.y-1.45*person.width,
+                              person.height-0.25);
   person_age_node_->setPosition(age_position);
 
   // Deal with the face

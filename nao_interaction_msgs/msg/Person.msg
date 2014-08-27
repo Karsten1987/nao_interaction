@@ -1,6 +1,9 @@
 # Message describing the body of a person
 uint32 GENDER_MALE = 1
 uint32 GENDER_FEMALE = 0
+uint32 NO_GENDER = 2
+
+uint32 NO_AGE = 100
 
 # Header
 Header header
