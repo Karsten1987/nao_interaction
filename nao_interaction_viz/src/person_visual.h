@@ -94,9 +94,11 @@ private:
   /** The cylinder representing the person */
   boost::shared_ptr<rviz::PersonShape> person_body_;
   boost::shared_ptr<rviz::PersonShape> person_valence_;
+  boost::shared_ptr<rviz::PersonShape> person_attention_pic_;
   boost::shared_ptr<rviz::PersonShape> person_gender_;
   boost::shared_ptr<rviz::MovableText> person_name_;
   boost::shared_ptr<rviz::MovableText> person_age_;
+  boost::shared_ptr<rviz::MovableText> person_attention_text_;
 
   // A SceneNode whose pose is set to match the coordinate frame of
   // the Object message header.
@@ -104,6 +106,7 @@ private:
   Ogre::SceneNode* object_node_;
   Ogre::SceneNode* person_name_node_;
   Ogre::SceneNode* person_age_node_;
+  Ogre::SceneNode* person_attention_node_;
 
   // The SceneManager, kept here only so the destructor can ask it to
   // destroy the ``frame_node_``.

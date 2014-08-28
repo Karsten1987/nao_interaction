@@ -59,6 +59,7 @@ PersonVisual::PersonVisual(Ogre::SceneManager* scene_manager, Ogre::SceneNode* p
   object_node_ = frame_node_->createChildSceneNode();
   person_name_node_ = object_node_->createChildSceneNode();
   person_age_node_ = object_node_->createChildSceneNode();
+  person_attention_node_ = object_node_->createChildSceneNode();
 
   // Initialize the axes
   axes_head_.reset(new rviz::Axes(scene_manager_, object_node_));
@@ -83,6 +84,15 @@ PersonVisual::PersonVisual(Ogre::SceneManager* scene_manager, Ogre::SceneNode* p
   person_name_->setVisible(true);
   person_name_node_->attachObject(person_name_.get());
 
+  // Initialize attention level
+  person_attention_text_.reset(new rviz::MovableText("EMPTY"));
+  person_attention_text_->setTextAlignment(rviz::MovableText::H_CENTER, rviz::MovableText::V_CENTER);
+  person_attention_text_->setCharacterHeight(0.1);
+  person_attention_text_->showOnTop();
+  person_attention_text_->setColor(Ogre::ColourValue::Black);
+  person_attention_text_->setVisible(true);
+  person_attention_node_->attachObject(person_attention_text_.get());
+
   // Initialize the cylinder for a basic person
   person_body_.reset(new rviz::PersonShape(rviz::PersonShape::BODY,
                                            scene_manager,
@@ -95,12 +105,18 @@ PersonVisual::PersonVisual(Ogre::SceneManager* scene_manager, Ogre::SceneNode* p
   person_valence_.reset(new rviz::PersonShape(rviz::PersonShape::VALENCE_NEUTRAL,
                                               scene_manager_,
                                               object_node_));
+
+  person_attention_pic_.reset(new rviz::PersonShape(rviz::PersonShape::ATTENTION_ABSENT,
+                                              scene_manager_,
+                                              object_node_));
 }
 
 PersonVisual::~PersonVisual() {
   // Destroy the frame node since we don't need it anymore.
   scene_manager_->destroySceneNode(object_node_);
   scene_manager_->destroySceneNode(person_name_node_);
+  scene_manager_->destroySceneNode(person_age_node_);
+  scene_manager_->destroySceneNode(person_attention_node_);
   scene_manager_->destroySceneNode(frame_node_);
 }
 
@@ -181,6 +197,29 @@ void PersonVisual::setMessage(const nao_interaction_msgs::Person& person, bool d
                                  person.height);
   person_valence_->setPosition(valence_position);
 
+  // ATTENTION PIC
+  rviz::PersonShape::Type attention = rviz::PersonShape::ATTENTION_ABSENT;
+  std::string attention_text = "absent";
+  if (person.emotion.attention[0] > 35)
+  {
+    attention = rviz::PersonShape::ATTENTION_INATENTIVE;
+    attention_text = "inatentive";
+  }
+  if (person.emotion.attention[0] > 60)
+  {
+    attention = rviz::PersonShape::ATTENTION_FOCUSED;
+    attention_text = "focused";
+  }
+  person_attention_pic_->changeMaterial(attention);
+  person_attention_pic_->setOrientation(image_quat);
+  //  Ogre::Vector3 scale_gender(0.002, 0.002, 1);
+  person_attention_pic_->setScale(image_scale);
+  person_attention_pic_->setColor(1.0, 1.0, 1.0, 0.9);
+  Ogre::Vector3 attention_pic_position(position.x,
+                                 position.y-2.0*person.width,
+                                 person.height);
+  person_attention_pic_->setPosition(attention_pic_position);
+
 
   // NAME/ID
   std::stringstream caption;
@@ -204,16 +243,22 @@ void PersonVisual::setMessage(const nao_interaction_msgs::Person& person, bool d
   person_age_->setCaption(age_caption.str());
   person_age_->setVisible(true);
   Ogre::Vector3 age_position(position.x,
-                             position.y-1.45*person.width,
+                             position.y-1.0*person.width,
                              person.height-0.25);
   person_age_node_->setPosition(age_position);
   person_gender_->getRootNode()->setVisible(true);
   }
-  // Deal with the face
-  //  if ((!do_display_face) || (face.height == 0.0))
-  //    return;
-  //  Ogre::Vector3 position_head(0, 0, 0);
-  //  axes_head_->setPosition(position_head);
+
+  // ATTENTION_TEXT
+  std::stringstream attention_caption;
+  attention_caption << attention_text;
+  person_attention_text_->setCaption(attention_caption.str());
+  person_attention_text_->setVisible(true);
+  Ogre::Vector3 attention_text_position(position.x,
+                             position.y-2.0*person.width,
+                             person.height - 0.15);
+  person_attention_node_->setPosition(attention_text_position);
+
 }
 
 // Position and orientation are passed through to the SceneNode.

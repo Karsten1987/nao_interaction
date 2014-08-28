@@ -27,8 +27,6 @@ public:
 
   enum Type
   {
-    BODY = 10,
-    FACE = 11,
     GENDER_MALE = 0,
     GENDER_FEMALE = 1,
     VALENCE_HIGHEST = 4,
@@ -36,6 +34,11 @@ public:
     VALENCE_NEUTRAL = 6,
     VALENCE_LOW = 7,
     VALENCE_LOWEST = 8,
+    ATTENTION_ABSENT = 9,
+    ATTENTION_INATENTIVE = 10,
+    ATTENTION_FOCUSED = 11,
+    BODY = 12,
+    FACE = 13,
   };
 
   PersonShape(Type type, Ogre::SceneManager* scene_manager, Ogre::SceneNode* parent_node = NULL);

@@ -131,6 +131,15 @@ bool PersonShape::changeMaterial(const PersonShape::Type type)
   case VALENCE_HIGHEST:
     createMaterial("textures/valence_highest.png");
     break;
+  case ATTENTION_ABSENT:
+    createMaterial("textures/attention_absent.png");
+    break;
+  case ATTENTION_FOCUSED:
+    createMaterial("textures/attention_focused.png");
+    break;
+  case ATTENTION_INATENTIVE:
+    createMaterial("textures/attention_inatentive.png");
+    break;
   }
   entity_->setMaterial(material_);
 }
