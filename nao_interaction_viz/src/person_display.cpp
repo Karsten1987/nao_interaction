@@ -35,6 +35,8 @@
 #include "person_display.h"
 
 #include <nao_interaction_msgs/Person.h>
+#include <ros/package.h>
+
 
 namespace nao_interaction_viz {
 
@@ -85,6 +87,15 @@ private:
 // superclass.
 void PersonDisplay::onInitialize() {
   MFDClass::onInitialize();
+
+  // setup a new resource group for the pictograms
+  const std::string resource_name = "nao_interaction_viz";
+  Ogre::ResourceGroupManager::getSingleton().createResourceGroup(resource_name);
+  Ogre::ResourceGroupManager::getSingleton().
+      addResourceLocation( ros::package::getPath(ROS_PACKAGE_NAME), "FileSystem", resource_name);
+  ROS_INFO_STREAM("adding resource group" << ROS_PACKAGE_NAME);
+  Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+
   context_->getUpdateQueue()->addCallback( ros::CallbackInterfacePtr( new Update(*this) ) );
 }
 

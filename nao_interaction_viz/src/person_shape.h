@@ -58,7 +58,7 @@ public:
   Ogre::MaterialPtr getMaterial() { return material_; }
 
   bool createMaterial(const std::string& image_name = "default",
-                      const std::string& resource_group = "Autodetect" );
+                      const std::string& resource_group = "nao_interaction_viz"/*"Autodetect"*/ );
 
   bool changeMaterial(const PersonShape::Type type);
 
