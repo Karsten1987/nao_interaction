@@ -75,12 +75,16 @@ void PersonShape::createEntity(const std::string &name,
 
   if (type == PersonShape::BODY)
   {
+#if (OGRE_VERSION_MINOR >=8)
     ogre_tools::STLLoader stl_loader;
     Ogre::MeshPtr mesh_ptr;
     std::string mesh_name = "rviz_person_body";
     stl_loader.load(getMeshRoot()+"/meshes/rviz_body.stl");
     mesh_ptr = stl_loader.toMesh(mesh_name);
     entity_ = scene_manager->createEntity(name, mesh_ptr->getName() );
+#else
+    entity_ = scene_manager->createEntity(name, "cylinder.mesh");
+#endif
   }
   else{
     entity_ = scene_manager->createEntity(name,  Ogre::SceneManager::PT_PLANE);
