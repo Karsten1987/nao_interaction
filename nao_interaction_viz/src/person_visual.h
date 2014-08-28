@@ -75,6 +75,9 @@ public:
   void
   setFrameOrientation(const Ogre::Quaternion& orientation);
 
+  void
+  setFrameTransparency(const float alpha);
+
   /**
    * Set the mesh of the visual by using a file and setting it to the mesh resource
    * @param mesh_file The file in which the mesh is stored
@@ -105,6 +108,7 @@ private:
   // The SceneManager, kept here only so the destructor can ask it to
   // destroy the ``frame_node_``.
   Ogre::SceneManager* scene_manager_;
+
 };
 
 }    // end namespace rviz_plugin_tutorials

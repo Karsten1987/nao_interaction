@@ -16,22 +16,28 @@
 
 namespace rviz
 {
+
+const std::string& PersonShape::getMeshRoot()
+{
+  static std::string package_root;
+  if (package_root == "")
+  {
+    package_root = ros::package::getPath(ROS_PACKAGE_NAME);
+    ROS_DEBUG_STREAM("package root:" << package_root);
+  }
+  return package_root;
+}
+
 PersonShape::PersonShape(PersonShape::Type type, Ogre::SceneManager *scene_manager, Ogre::SceneNode *parent_node):
   Object(scene_manager),
   type_(type)
 {
 
-  if (package_root == "")
-  {
-    package_root = ros::package::getPath(ROS_PACKAGE_NAME);
-    ROS_INFO_STREAM("package root:" << package_root);
-  }
-
   // TAKE THE NAME INTO ACCOUNT !!!
   static uint32_t count = 0;
   std::stringstream ss;
   ss << "PersonShape" << count++;
-  ROS_INFO_STREAM("PersonShape Constructor called "<< ss.str());
+  ROS_DEBUG_STREAM("PersonShape Constructor called "<< ss.str());
 
   this->createEntity(ss.str(), type, scene_manager);
 
@@ -47,13 +53,13 @@ PersonShape::PersonShape(PersonShape::Type type, Ogre::SceneManager *scene_manag
 
 PersonShape::~PersonShape()
 {
-  ROS_INFO_STREAM("PersonShape DEnstructor called");
+  ROS_DEBUG_STREAM("PersonShape DEnstructor called");
   scene_manager_->destroySceneNode(scene_node_->getName() );
   scene_manager_->destroySceneNode(offset_node_->getName() );
 
   if (entity_)
   {
-    std::cerr << "destroy entity :" << entity_->getName() << std::endl;
+    ROS_DEBUG_STREAM("destroy entity :" << entity_->getName());
     scene_manager_->destroyEntity( entity_ );
   }
   material_->unload();
@@ -65,14 +71,14 @@ void PersonShape::createEntity(const std::string &name,
                                PersonShape::Type type,
                                Ogre::SceneManager *scene_manager)
 {
-  ROS_INFO_STREAM("create new entity");
+  ROS_DEBUG_STREAM("create new entity");
 
   if (type == PersonShape::BODY)
   {
     ogre_tools::STLLoader stl_loader;
     Ogre::MeshPtr mesh_ptr;
     std::string mesh_name = "rviz_person_body";
-    stl_loader.load("/home/kknese/rviz_body.stl");
+    stl_loader.load(getMeshRoot()+"/meshes/rviz_body.stl");
     mesh_ptr = stl_loader.toMesh(mesh_name);
     entity_ = scene_manager->createEntity(name, mesh_ptr->getName() );
   }
@@ -91,11 +97,11 @@ bool PersonShape::changeMaterial(const PersonShape::Type type)
 {
   if (!entity_ )
   {
-    std::cerr << "entity is null in changeMaterial" << std::endl;
+    ROS_ERROR_STREAM("entity is null in changeMaterial");
     return false;
   }
 
-  std::cerr << "Changing material " << std::endl;
+  ROS_DEBUG_STREAM("Changing material ");
   switch (type)
   {
   case FACE:

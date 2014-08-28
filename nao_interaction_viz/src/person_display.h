@@ -31,6 +31,7 @@ class PersonVisual;
 class PersonDisplay: public rviz::MessageFilterDisplay<nao_interaction_msgs::Persons> {
   Q_OBJECT
 public:
+
   // Constructor.  pluginlib::ClassLoader creates instances by calling
   // the default constructor, so make sure you have one.
   PersonDisplay();
@@ -61,6 +62,10 @@ private:
   rviz::BoolProperty* do_display_confidence_;
   /** flag indicating whether information about the face should be displayed */
   rviz::BoolProperty* do_display_face_;
+
+  friend class Update;
+  ros::Time old;
+
 };
 
 }

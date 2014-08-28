@@ -44,6 +44,35 @@ PersonDisplay::PersonDisplay() {
   do_display_face_ = new rviz::BoolProperty("Face", true, "Display information about the face.", this);
 }
 
+class Update : public ros::CallbackInterface
+{
+
+
+public:
+  Update(PersonDisplay &pd)
+    : person_display_(pd)
+  {}
+
+  CallResult call()
+  {
+    ros::Time now = ros::Time::now();
+    if ((now.toSec()-person_display_.old.toSec())>1.0)
+    {
+    ROS_DEBUG_STREAM("update transparency for person display");
+    for (int i=0; i<person_display_.visuals_.size(); ++i)
+    {
+      person_display_.visuals_[i]->setFrameTransparency(0.1);
+    }
+    }
+    return TryAgain;
+
+  }
+
+private:
+  PersonDisplay& person_display_;
+};
+
+
 // After the top-level rviz::Display::initialize() does its own setup,
 // it calls the subclass's onInitialize() function.  This is where we
 // instantiate all the workings of the class.  We make sure to also
@@ -56,6 +85,7 @@ PersonDisplay::PersonDisplay() {
 // superclass.
 void PersonDisplay::onInitialize() {
   MFDClass::onInitialize();
+  context_->getUpdateQueue()->addCallback( ros::CallbackInterfacePtr( new Update(*this) ) );
 }
 
 // Clear the visuals by deleting their objects.
@@ -71,6 +101,7 @@ void PersonDisplay::processMessage(const nao_interaction_msgs::PersonsConstPtr& 
   // fixed frame to the frame in the header of this message. If
   // it fails, we can't do anything else so we return.
 
+  old = ros::Time::now();
   visuals_.clear();
   for (size_t i_msg = 0; i_msg < msg->persons.size(); ++i_msg)
   {

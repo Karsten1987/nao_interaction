@@ -81,7 +81,7 @@ protected:
   const std::string mesh_file_;
 
 private:
-  std::string package_root;
+  static const std::string& getMeshRoot();
 };
 
 } // namespace rviz
