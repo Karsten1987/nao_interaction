@@ -60,11 +60,11 @@ public:
     ros::Time now = ros::Time::now();
     if ((now.toSec()-person_display_.old.toSec())>1.0)
     {
-    ROS_DEBUG_STREAM("update transparency for person display");
-    for (int i=0; i<person_display_.visuals_.size(); ++i)
-    {
-      person_display_.visuals_[i]->setFrameTransparency(0.1);
-    }
+      ROS_DEBUG_STREAM("update transparency for person display");
+      for (int i=0; i<person_display_.visuals_.size(); ++i)
+      {
+        person_display_.visuals_[i]->setFrameTransparency(0.1);
+      }
     }
     return TryAgain;
 
@@ -93,7 +93,7 @@ void PersonDisplay::onInitialize() {
   Ogre::ResourceGroupManager::getSingleton().createResourceGroup(resource_name);
   Ogre::ResourceGroupManager::getSingleton().
       addResourceLocation( ros::package::getPath(ROS_PACKAGE_NAME), "FileSystem", resource_name);
-  ROS_INFO_STREAM("adding resource group" << ROS_PACKAGE_NAME);
+  ROS_INFO_STREAM("adding resource group" << ros::package::getPath(ROS_PACKAGE_NAME));
   Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
   context_->getUpdateQueue()->addCallback( ros::CallbackInterfacePtr( new Update(*this) ) );
@@ -119,12 +119,12 @@ void PersonDisplay::processMessage(const nao_interaction_msgs::PersonsConstPtr& 
     const nao_interaction_msgs::Person& object = msg->persons[i_msg];
     // Create a new visual for that message
     boost::shared_ptr<PersonVisual> visual = boost::shared_ptr<PersonVisual>(
-        new PersonVisual(context_->getSceneManager(), scene_node_, context_));
+          new PersonVisual(context_->getSceneManager(), scene_node_, context_));
     visuals_.push_back(visual);
 
     // Define the visual
     visual->setMessage(object, do_display_id_->getBool(), do_display_confidence_->getBool(),
-        do_display_face_->getBool());
+                       do_display_face_->getBool());
 
     Ogre::Quaternion orientation;
     Ogre::Vector3 position;
@@ -133,7 +133,7 @@ void PersonDisplay::processMessage(const nao_interaction_msgs::PersonsConstPtr& 
                                                    position,
                                                    orientation)) {
       ROS_DEBUG("Error transforming from frame '%s' to frame '%s'", object.header.frame_id.c_str(),
-          qPrintable(fixed_frame_));
+                qPrintable(fixed_frame_));
       return;
     }
     ROS_INFO_STREAM("base translation: " << position);
