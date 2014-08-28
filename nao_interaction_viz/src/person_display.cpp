@@ -88,6 +88,7 @@ private:
 void PersonDisplay::onInitialize() {
   MFDClass::onInitialize();
 
+  ROS_INFO_STREAM("Ogre version: " << OGRE_VERSION_MINOR);
   // setup a new resource group for the pictograms
   const std::string resource_name = "nao_interaction_viz";
   Ogre::ResourceGroupManager::getSingleton().createResourceGroup(resource_name);

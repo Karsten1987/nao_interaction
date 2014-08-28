@@ -168,8 +168,11 @@ bool PersonShape::createMaterial( const std::string& image_name,
         = Ogre::TextureManager::getSingleton().load( image_name, resource_group );
     if( texture.isNull() )
       return false;
-
+#if (OGRE_VERSION_MINOR >=8)
     texture_unit->setTexture( texture ); // or setTextureName if Ogre 1.8?
+#else
+    texture_unit->setTextureName( texture->getName());
+#endif
   }
   return true;
 }
